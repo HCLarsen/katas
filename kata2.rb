@@ -29,6 +29,9 @@
 #
 # This is the vulnerable code you want to break into:
 
+require 'json'
+require 'byebug'
+
 SecureCredentials = Struct.new(:username, :password)
 
 class SecureLogin
@@ -38,7 +41,7 @@ class SecureLogin
   # Gets all users from the database
   def self.users
     from_json = ->(data) { SecureCredentials.new(data['user'], data['pw']).freeze }
-    credentials = JSON.load(USER_DATA).map(&from_json).to_set
+    credentials = JSON.load(USER_DATA).map(&from_json)
     credentials << ADMIN
     credentials.freeze
   end
@@ -62,6 +65,14 @@ class SecureLogin
 
   private
 
+  def given_credentials
+    print "Enter Username:"
+    username = gets.chomp
+    print "Enter Password:"
+    password = gets.chomp
+    SecureCredentials.new(username, password)
+  end
+
   # Make sure we’re not dealing with malicious objects
   def check_sanity(given)
     fail unless String(given.username) == given.username
@@ -75,6 +86,7 @@ class SecureLogin
 
   # Check username and password against the DB
   def check_credentials!(given)
+    byebug
     all_users = self.class.users
 
     if all_users.include?(given)

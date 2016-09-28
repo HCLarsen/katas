@@ -4,4 +4,35 @@
 
 def isValidWalk(walk)
   #your code here
+  directions = {'n'=>0, 's'=>0, 'e'=>0, 'w'=>0}
+
+  walk.each do |step|
+    directions[step] += 1
+  end
+
+  if directions['n'] == directions['s'] && directions['e'] == directions['w']
+    walk
+  else
+    false
+  end
+end
+
+def direction
+  ['n', 's', 'e', 'w'].sample
+end
+
+def generateWalk
+  steps = []
+  10.times  do
+    steps << direction
+  end
+
+  return steps
+end
+
+def findValidWalk
+  until valid = isValidWalk(generateWalk)
+  end
+
+  puts "Found valid path at #{valid}"
 end
